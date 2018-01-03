@@ -73,8 +73,40 @@ namespace ConvertXMLtoXLS.Logic
                 }
 
             }
-         
 
+
+        /// <summary>
+        /// Insert new rows to existing excel - xls.
+        /// HDR=YES which means thath we gonna skip first row, thath contains column names. 
+        /// </summary>
+        /// <param name="sSheetName"></param>
+        /// <param name="sFirstParam"></param>
+        /// <param name="sSecondParam"></param>
+        /// <param name="sThirdParam"></param>
+        public static void InsertDataToExistingFile(string sSheetName, string sFirstParam, string sSecondParam, string sThirdParam)
+        {
+            string connectionString = String.Format(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties=""Excel 12.0 Xml;HDR=YES""",
+                @"C:\Path\filename.xls");
+
+            using (var excelConnection = new OleDbConnection(connectionString))
+            {
+                if (excelConnection.State != ConnectionState.Open) { excelConnection.Open(); }
+
+                var sqlText = "CREATE TABLE [" + sSheetName + "$] ([1Column] VARCHAR(100), [2Column] VARCHAR(100), [3Column] VARCHAR(100))";
+
+                //Create worksheet
+                var command = new OleDbCommand(sqlText, excelConnection);
+                command.ExecuteNonQuery();
+
+                var commandText = $"INSERT Into [" + sSheetName + "$] (1Column,2Column,3Column) Values ('" + sFirstParam + "','" + sSecondParam + "','" + sThirdParam + "')";
+                OleDbCommand cmd = new OleDbCommand(commandText, excelConnection);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+                excelConnection.Close();
+            }
         }
+
+
+    }
     }
 
