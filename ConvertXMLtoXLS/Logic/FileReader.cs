@@ -94,7 +94,7 @@ namespace ConvertXMLtoXLS.Logic
 
                 var sqlText = "CREATE TABLE [" + sSheetName + "$] ([1Column] VARCHAR(100), [2Column] VARCHAR(100), [3Column] VARCHAR(100))";
 
-                //Create worksheet
+                //Create new column if not exist.
                 var command = new OleDbCommand(sqlText, excelConnection);
                 command.ExecuteNonQuery();
 
